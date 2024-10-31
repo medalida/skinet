@@ -74,7 +74,7 @@ public class ProductsController(IGenericRepository<Product> repo, IProductReposi
     [HttpGet("brands")]
     public async Task<ActionResult<IEnumerable<string>>> GetBrands()
     {
-        return Ok(await pRepo.GetBrandsAsync());
+        return Ok(await repo.ListAsync(new BrandListSpecification()));
     }
     
     [HttpGet("types")]
