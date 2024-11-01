@@ -8,6 +8,14 @@ public class BaseSpecification<T> (Expression<Func<T, bool>>? criteria = null): 
     public Expression<Func<T, bool>>? Criteria => criteria;
     public Expression<Func<T, object>>? OrderBy { get; private set; }
     public Expression<Func<T, object>>? OrderByDescending { get; private set; }
+    
+    public int Take { get; private set; }
+    public int Skip { get; private set; }
+    public bool IsPagingEnabled { get; private set; }
+    public IQueryable<T> ApplyCriteria(IQueryable<T> query)
+    {
+        return Criteria != null ? query.Where(Criteria) : query;
+    }
 
     protected void AddOrderBy(Expression<Func<T, object>> orderBy)
     {
@@ -17,6 +25,13 @@ public class BaseSpecification<T> (Expression<Func<T, bool>>? criteria = null): 
     protected void AddOrderByDescending(Expression<Func<T, object>> orderByDescending)
     {
         OrderByDescending = orderByDescending;
+    }
+
+    protected void ApplyPaging(int skip, int take)
+    {
+        Skip = skip;
+        Take = take;
+        IsPagingEnabled = true;
     }
 }
 
