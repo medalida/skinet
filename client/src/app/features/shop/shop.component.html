@@ -1,9 +1,14 @@
 <div class="flex flex-col gap-3">
     <div class="flex justify-end">
-        <button mat-stroked-button (click)="openFiltersDialog()">
+        <button class="m-2" mat-stroked-button (click) ="openFiltersDialog()">
             <mat-icon>filter_list</mat-icon>
             Filter
         </button>
+        <button class="m-2" mat-stroked-button [matMenuTriggerFor]="sortMenu">
+            <mat-icon>sort_icon</mat-icon>
+            Sort
+        </button>
+            
     </div>
     <div class="grid grid-cols-4 gap-4">
         @for (product of products ; track product.id) {
@@ -11,4 +16,11 @@
         }
     </div>    
 </div>
+<mat-menu #sortMenu="matMenu">
+    <mat-selection-list [multiple]=false (selectionChange)="onSortChange($event)">
+        @for (sort of sortOptions; track $index) {
+            <mat-list-option [value]="sort.value" [selected]="selectedSort[0]==sort.value">{{sort.name}}</mat-list-option>
+        }
+    </mat-selection-list>
+</mat-menu>
 

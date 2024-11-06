@@ -7,11 +7,14 @@ import { MatDialog } from '@angular/material/dialog';
 import { FilterDialogComponent } from './filter-dialog/filter-dialog.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatListOption, MatSelectionList, MatSelectionListChange } from '@angular/material/list';
+import {MatMenu, MatMenuTrigger} from '@angular/material/menu';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-shop',
   standalone: true,
-  imports: [MatCard, ProductItemComponent, MatButtonModule, MatIconModule],
+  imports: [MatCard, ProductItemComponent, MatButtonModule, MatIconModule, MatSelectionList, MatListOption, MatMenuTrigger, MatMenu, FormsModule],
   templateUrl: './shop.component.html',
   styleUrl: './shop.component.scss'
 })
@@ -23,6 +26,12 @@ export class ShopComponent implements OnInit {
   products: Product[] = [];
   selectedBrands: string[] = [];
   selectedTypes: string[] = [];
+  selectedSort: string = "name";
+  sortOptions: any = [
+    { name: "Alphabatical", value: "name" },
+    { name: "price: Low-High", value: "priceAsc" },
+    { name: "price: High-Low", value: "priceDesc" }
+  ];
 
   ngOnInit(): void {
     this.intializeShop();
@@ -34,8 +43,8 @@ export class ShopComponent implements OnInit {
     this.shopService.getTypes();
   }
 
-  setProducts(brands? : string[], types? : string[]): void {
-    this.shopService.getProducts(brands, types).subscribe({
+  setProducts(brands? : string[], types? : string[], sort?: string): void {
+    this.shopService.getProducts(brands, types, sort).subscribe({
       next: (response) => this.products = response.data,
       error: (error) => console.error(error)
     });
@@ -49,13 +58,27 @@ export class ShopComponent implements OnInit {
         selectedTypes: this.selectedTypes
       }
     });
+
     dialogRef.afterClosed().subscribe({
       next: result => {
         if (result) {
           this.selectedBrands = result.selectedBrands;
           this.selectedTypes = result.selectedTypes;
-          this.setProducts(this.selectedBrands, this.selectedTypes);
+          this.setProducts(this.selectedBrands, this.selectedTypes, this.selectedSort);
         }
+      }
+    });
+  }
+
+  onSortChange(event: MatSelectionListChange) {
+    this.selectedSort = event.options[0].value ?? "name";
+    this.products.sort((a, b) => {
+      if (this.selectedSort === "name") {
+        return a.name.localeCompare(b.name);
+      } else if (this.selectedSort === "priceAsc") {
+        return a.price - b.price;
+      } else {
+        return b.price - a.price;
       }
     });
   }
