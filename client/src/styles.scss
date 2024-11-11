@@ -18,3 +18,8 @@ $customTheme: mat.define-theme();
 .container {
     @apply mx-auto max-w-screen-lg;
 }
+
+
+.mdc-notched-outline__notch {
+    border-right-style: none !important;
+}
