@@ -12,6 +12,7 @@ import { MatButton } from '@angular/material/button';
 export class TestErrorComponent {
   baseUrl = 'http://localhost:5000/api/';
   private http = inject(HttpClient);
+  validationErrors: string[] = [];
 
 
 
@@ -65,7 +66,7 @@ export class TestErrorComponent {
         console.log(response);
       },
       error: (error) => {
-        console.log(error);
+        this.validationErrors = error
       }
     })
   }

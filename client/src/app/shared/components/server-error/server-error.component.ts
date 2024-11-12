@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Component, inject } from '@angular/core';
 import { MatCard } from '@angular/material/card';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-server-error',
@@ -9,5 +11,9 @@ import { MatCard } from '@angular/material/card';
   styleUrl: './server-error.component.scss'
 })
 export class ServerErrorComponent {
-error: any;
+  error?: any;
+
+  constructor(router: Router) { 
+    this.error = router.getCurrentNavigation()?.extras.state?.['error'];
+  }
 }
