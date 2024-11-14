@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { Product } from '../../shared/modules/product';
 import { MatCard, MatCardActions, MatCardContent } from '@angular/material/card';
 import { CurrencyPipe, registerLocaleData } from '@angular/common';
@@ -6,6 +6,7 @@ import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import localeFr from '@angular/common/locales/fr';
 import { RouterLink } from '@angular/router';
+import { CartService } from '../../core/services/cart.service';
 
 registerLocaleData(localeFr, 'fr-FR');
 
@@ -18,5 +19,6 @@ registerLocaleData(localeFr, 'fr-FR');
 })
 export class ProductItemComponent {
   @Input() product?: Product;
+  cartService = inject(CartService);
   
 }
