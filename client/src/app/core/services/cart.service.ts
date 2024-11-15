@@ -13,6 +13,21 @@ export class CartService {
   private http: HttpClient = inject(HttpClient);
   cart = signal<Cart | null>(null);
   itemCount = computed(() => this.cart()?.items.reduce((sum, item) => sum + item.quantity, 0) ?? 0);
+  totals = computed(() => {
+    const cart = this.cart();
+    if (!cart) {
+      return null;
+    }
+    const subtotal = cart.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const discout = 0;
+    const shipping = 0;
+    return {
+      subtotal,
+      discout,
+      shipping,
+      total: subtotal - discout + shipping
+    }
+  });
   
   getCart(id: string) {
     return this.http.get<Cart>(this.baseUrl + 'cart?id=' + id).pipe(
@@ -73,5 +88,36 @@ export class CartService {
     const cart = new Cart();
     localStorage.setItem('cart_id', cart.id);
     return cart;
+  }
+
+  removeItemFromCart(productId: number, quantity: number = 1): void {
+    const cart = this.cart();
+    if (!cart) {
+      return;
+    }
+    const index = cart.items.findIndex(item => item.productId === productId);
+    if (index === -1) {
+      return;
+    }
+    if (cart.items[index].quantity > quantity) {
+      cart.items[index].quantity -= quantity;
+    } else {
+      cart.items.splice(index, 1);
+    }
+    if (cart.items.length === 0) {
+      this.deleteCart(cart.id);
+    } else {
+      this.setCart(cart);
+    }
+  }
+
+  deleteCart(id: string) {
+    this.http.delete(this.baseUrl + 'cart?id=' + id).subscribe({
+      next: () => {
+        localStorage.removeItem('cart_id');
+        this.cart.set(null);
+      },
+      error: (error) => console.error(error)
+    });
   }
 }
