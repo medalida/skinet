@@ -1,5 +1,7 @@
-﻿using API.DTOs;
+﻿using System.Security.Claims;
+using API.DTOs;
 using Core.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
@@ -32,9 +34,18 @@ public class BuggyController : BaseApiController
     }
     
     [HttpPost("validationerror")]
-    public IActionResult GetValidationError(ProductDTO entity)
+    public IActionResult GetValidationError(ProductDto entity)
     {
         return Ok(entity);
+    }
+    
+    [Authorize]
+    [HttpGet("secret")]
+    public IActionResult GetSecret()
+    {
+        var name = User.FindFirst(ClaimTypes.Name)?.Value;
+        var id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        return Ok("Hello " + name + " with ID " + id);
     }
     
     

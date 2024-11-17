@@ -2,7 +2,7 @@
 
 namespace API.DTOs;
 
-public class ProductDTO
+public class ProductDto
 {
     [Required]
     public string Name { get; set; } = string.Empty;
