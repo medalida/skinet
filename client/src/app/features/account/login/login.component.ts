@@ -34,7 +34,7 @@ export class LoginComponent {
   onSubmit() {
     this.accountService.login(this.loginFrom.value).subscribe({
       next: () => {
-        this.accountService.getUserInfo();
+        this.accountService.getUserInfo().subscribe();
         this.router.navigateByUrl('/shop');
       }
     });
