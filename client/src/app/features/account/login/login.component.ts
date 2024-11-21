@@ -5,7 +5,9 @@ import { MatCard } from '@angular/material/card';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { AccountService } from '../../../core/services/account.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { TextInputComponent } from '../../../shared/components/text-input/text-input.component';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -13,9 +15,7 @@ import { Router } from '@angular/router';
   imports: [
     ReactiveFormsModule,
     MatCard,
-    MatLabel,
-    MatFormField,
-    MatInput,
+    TextInputComponent,
     MatButton
   ],
   templateUrl: './login.component.html',
@@ -25,6 +25,13 @@ export class LoginComponent {
   private fb = inject(FormBuilder);
   private accountService = inject(AccountService);
   private router = inject(Router);
+  private activatedRoute = inject(ActivatedRoute);
+  returnUrl = '/shop';
+
+  constructor() {
+    this.returnUrl = this.activatedRoute.snapshot.queryParams['returnUrl'] ?? this.returnUrl;
+    console.log(this.returnUrl);
+  }
 
   loginFrom = this.fb.group({
     email: [''],
@@ -34,8 +41,11 @@ export class LoginComponent {
   onSubmit() {
     this.accountService.login(this.loginFrom.value).subscribe({
       next: () => {
-        this.accountService.getUserInfo().subscribe();
-        this.router.navigateByUrl('/shop');
+        this.accountService.getUserInfo().subscribe({
+          next: () => {
+            this.router.navigateByUrl(this.returnUrl);
+          }
+        });
       }
     });
   }
