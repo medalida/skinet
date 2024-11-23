@@ -11,7 +11,7 @@ namespace API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ProductsController(IGenericRepository<Product> repo, IProductRepository pRepo) : BaseApiController
+public class ProductsController(IGenericRepository<Product> repo) : BaseApiController
 {
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Product>>> GetProducts([FromQuery]ProductSpecParams productSpecParams)
@@ -82,6 +82,6 @@ public class ProductsController(IGenericRepository<Product> repo, IProductReposi
     [HttpGet("types")]
     public async Task<ActionResult<IEnumerable<string>>> GetTypes()
     {
-        return Ok(await pRepo.GetTypesAsync());
+        return Ok(await repo.ListAsync(new TypeListSpecification()));
     }
 }
