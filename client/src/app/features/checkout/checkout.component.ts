@@ -9,11 +9,13 @@ import { SnackbarService } from '../../core/services/snackbar.service';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { Address } from '../../shared/modules/user';
 import { AccountService } from '../../core/services/account.service';
+import { CheckoutDeliveryComponent } from './checkout-delivery/checkout-delivery.component';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-checkout',
   standalone: true,
-  imports: [MatCheckboxModule, MatButtonModule, MatStepperModule, OrderSummaryComponent],
+  imports: [MatCheckboxModule, MatButtonModule, MatStepperModule, OrderSummaryComponent, CheckoutDeliveryComponent],
   templateUrl: './checkout.component.html',
   styleUrl: './checkout.component.scss'
 })
@@ -45,6 +47,8 @@ saveAddress: boolean = false;
           this.accountSercie.updateAddress(address).subscribe();
         }
       }
+    } else if (event.selectedIndex === 2) {
+      await firstValueFrom(this.stripeSercie.createOrUpdatePaymentIntent());
     }
   }
 
