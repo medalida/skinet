@@ -107,13 +107,17 @@ export class CartService {
       cart.items.splice(index, 1);
     }
     if (cart.items.length === 0) {
-      this.deleteCart(cart.id);
+      this.deleteCart();
     } else {
       this.setCart(cart);
     }
   }
 
-  deleteCart(id: string) {
+  deleteCart() {
+    const id = this.cart()?.id;
+    if (!id) {
+      return;
+    }
     this.http.delete(this.baseUrl + 'cart?id=' + id).subscribe({
       next: () => {
         localStorage.removeItem('cart_id');
@@ -121,5 +125,6 @@ export class CartService {
       },
       error: (error) => console.error(error)
     });
+    this.selectedDelivery.set(null);
   }
 }
