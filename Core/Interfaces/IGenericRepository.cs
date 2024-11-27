@@ -24,7 +24,5 @@ public interface IGenericRepository<T> where T : BaseEntity
     
     bool Exists(int id);
     
-    public Task<bool> SaveAllAsync();
-    
     Task<int> CountAsync();
 }
