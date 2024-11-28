@@ -13,7 +13,7 @@
                     <mat-icon class="text-green-600">add</mat-icon>
                 </button>
                 <div class="text-end order-4 w-32">
-                    <p class="font-bold text-xl">{{item().price | currency: 'EUR':'symbol':'1.2-2':'fr-FR' }}</p>
+                    <p class="font-bold text-xl">{{item().price | currencyEur }}</p>
                 </div>
             </div>
             <div class="w-full flex-1 space-y-4 max-w-md">

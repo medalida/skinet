@@ -125,6 +125,5 @@ export class CartService {
       },
       error: (error) => console.error(error)
     });
-    this.selectedDelivery.set(null);
   }
 }

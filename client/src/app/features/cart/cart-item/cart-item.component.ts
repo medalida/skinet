@@ -5,11 +5,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { CurrencyPipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { CartService } from '../../../core/services/cart.service';
+import { CurrencyEurPipe } from "../../../shared/pipes/currency-eur.pipe";
 
 @Component({
   selector: 'app-cart-item',
   standalone: true,
-  imports: [RouterLink, MatIconModule, CurrencyPipe, MatButtonModule],
+  imports: [RouterLink, MatIconModule, MatButtonModule, CurrencyEurPipe],
   templateUrl: './cart-item.component.html',
   styleUrl: './cart-item.component.scss'
 })

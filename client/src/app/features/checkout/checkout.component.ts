@@ -17,6 +17,9 @@ import { CartService } from '../../core/services/cart.service';
 import { CurrencyPipe } from '@angular/common';
 import { ConfirmationToken, StripeAddressElementChangeEvent, StripePaymentElementChangeEvent } from '@stripe/stripe-js';
 import { Router } from '@angular/router';
+import { OrderToCrete, ShippingAddress } from '../../shared/modules/order';
+import { OrderService } from '../../core/services/order.service';
+import { CurrencyEurPipe } from '../../shared/pipes/currency-eur.pipe';
 
 @Component({
   selector: 'app-checkout',
@@ -28,7 +31,7 @@ import { Router } from '@angular/router';
     CheckoutDeliveryComponent,
     CheckoutReviewComponent,
     MatProgressSpinnerModule,
-    CurrencyPipe,
+    CurrencyEurPipe,
     MatStepper],
   templateUrl: './checkout.component.html',
   styleUrl: './checkout.component.scss'
@@ -37,7 +40,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
 
   private stripeService = inject(StripeService);
   private accountSercie = inject(AccountService);
-  cartSercie = inject(CartService);
+  cartService = inject(CartService);
   private snack = inject(SnackbarService);
   private router = inject(Router);
   saveAddress: boolean = false;
@@ -46,6 +49,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   );
   confirmationToken? : ConfirmationToken;
   loading = false;
+  orderService = inject(OrderService);
 
   async ngOnInit() {
     try {
@@ -65,7 +69,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   async OnStepperSelectionChange(event: StepperSelectionEvent) {
     if (event.selectedIndex === 1) {
       if (this.saveAddress) {
-        const address = await this.getAddressFromStripe();
+        const address = await this.getAddressFromStripe() as Address;
         if (address) {
           this.accountSercie.updateAddress(address).subscribe();
         }
@@ -77,7 +81,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     }
   }
 
-  async getAddressFromStripe(): Promise<Address | null> {
+  async getAddressFromStripe(): Promise<Address | ShippingAddress | null> {
     const address = (await this.stripeService.getAddressElement()?.getValue())?.value.address;
     if (address) {
       return {
@@ -136,17 +140,50 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     try {
       if (this.confirmationToken) {
         const result = await this.stripeService.confirmPayment(this.confirmationToken);
-        if (result.error) {
+
+        if (result.paymentIntent?.status === 'succeeded') {
+          const orderToCreate = await this.createOrderModel();
+          if (!orderToCreate) {
+            throw new Error("Problem while creating order");
+          }
+          const orderResult = await firstValueFrom(this.orderService.createOrder(orderToCreate));
+          if (!orderResult) {
+            throw new Error("Order creation failed");
+          }
+          this.cartService.deleteCart();
+          this.cartService.selectedDelivery.set(null);
+          this.router.navigateByUrl('/checkout/success');
+        } else if (result.error) {
           throw result.error;
+        } else {
+          throw new Error("Something went wrong");
         }
-        this.cartSercie.deleteCart();
-        this.router.navigateByUrl('/checkout/success');
       }
     } catch (error: any) {
-      this.snack.error(error.message || "something went wrong");
+      this.snack.error(error.message);
       stepper.previous();
     } finally {
       this.loading = false;
+    }
+  }
+
+  private async createOrderModel(): Promise<OrderToCrete> {
+    const cart = this.cartService.cart();
+    const shippingAddress = await this.getAddressFromStripe() as ShippingAddress;
+    const card = this.confirmationToken?.payment_method_preview.card;
+    if (!card || !shippingAddress || !cart) {
+      throw new Error("Problem while creating order");
+    }
+    return {
+      cartId: cart.id,
+      deliveryMethodId: cart.deliveryMethodId,
+      shippingAddress: shippingAddress,
+      paymentSummary: {
+        last4: +card.last4,
+        brand: card.brand,
+        expMonth: card.exp_month,
+        expYear: card.exp_year
+      },
     }
   }
 
