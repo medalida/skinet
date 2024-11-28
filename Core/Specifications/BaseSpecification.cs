@@ -9,6 +9,10 @@ public class BaseSpecification<T> (Expression<Func<T, bool>>? criteria = null): 
     public Expression<Func<T, object>>? OrderBy { get; private set; }
     public Expression<Func<T, object>>? OrderByDescending { get; private set; }
     
+    public List<Expression<Func<T, object>>> Includes { get; } = [];
+
+    public List<string> IncludeString { get; } = [];
+
     public int Take { get; private set; }
     public int Skip { get; private set; }
     public bool IsPagingEnabled { get; private set; }
@@ -25,6 +29,16 @@ public class BaseSpecification<T> (Expression<Func<T, bool>>? criteria = null): 
     protected void AddOrderByDescending(Expression<Func<T, object>> orderByDescending)
     {
         OrderByDescending = orderByDescending;
+    }
+    
+    protected void AddInclude(Expression<Func<T, object>> include)
+    {
+        Includes.Add(include);
+    }
+    
+    protected void AddIncludeString(string includeString)
+    {
+        IncludeString.Add(includeString);
     }
 
     protected void ApplyPaging(int skip, int take)
