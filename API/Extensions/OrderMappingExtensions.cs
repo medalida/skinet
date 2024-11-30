@@ -15,7 +15,7 @@ public static class OrderMappingExtensions
             BuyerEmail = order.BuyerEmail,
             OrderDate = order.OrderDate,
             OrderItems = order.OrderItems.Select(i => i.ToDto()).ToList(),
-            OrderStatus = order.OrderStatus.ToString(),
+            Status = order.Status.ToString(),
             ShippingAddress = order.ShippingAddress,
             DeliveryMethod = order.DeliveryMethod.Description,
             ShippingPrice = order.DeliveryMethod.Price,

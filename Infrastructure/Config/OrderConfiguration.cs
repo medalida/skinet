@@ -10,7 +10,7 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
     {
         builder.OwnsOne(o => o.ShippingAddress, o => o.WithOwner());
         builder.OwnsOne(o => o.PaymentSummary, o => o.WithOwner());
-        builder.Property(o => o.OrderStatus).HasConversion(
+        builder.Property(o => o.Status).HasConversion(
             s => s.ToString(), 
             s => (OrderStatus)Enum.Parse(typeof(OrderStatus), s)
             );

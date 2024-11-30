@@ -50,7 +50,7 @@ public class OrdersController(ICartService cartService, IUnitOfWork unit) : Base
             OrderItems = items,
             PaymentSummary = createOrderDto.PaymentSummary,
             DeliveryMethod = deliveryMethod,
-            OrderStatus = OrderStatus.Pending,
+            Status = OrderStatus.Pending,
             OrderDate = DateTime.Now,
             Subtotal = items.Sum(x => x.Price * x.Quantity)
         };

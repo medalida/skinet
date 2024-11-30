@@ -7,7 +7,7 @@ public class OrderDto
 {
     public int Id { get; set; }
     public DateTime OrderDate { get; set; }
-    public required string OrderStatus { get; set; }
+    public required string Status { get; set; }
     public required string BuyerEmail { get; set; }
     public required ShippingAddress ShippingAddress { get; set; }
     public required decimal ShippingPrice { get; set; }

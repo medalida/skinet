@@ -3,7 +3,7 @@
 public class Order : BaseEntity
 {
     public DateTime OrderDate { get; set; }
-    public OrderStatus OrderStatus { get; set; }
+    public OrderStatus Status { get; set; }
     public required string BuyerEmail { get; set; }
     public required ShippingAddress ShippingAddress { get; set; }
     public required PaymentSummary PaymentSummary { get; set; }
