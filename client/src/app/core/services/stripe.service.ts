@@ -7,6 +7,7 @@ import { Cart } from '../../shared/modules/cart';
 import { firstValueFrom, map } from 'rxjs';
 import { Address } from '../../shared/modules/user';
 import { AccountService } from './account.service';
+import { ShippingAddress } from '../../shared/modules/order';
 
 @Injectable({
   providedIn: 'root'
@@ -87,6 +88,25 @@ export class StripeService {
 
   getAddressElement() {
     return this.addressElement;
+  }
+
+  async getAddress(): Promise<Address | ShippingAddress | null> {
+    const stripeAddressElement = await this.addressElement?.getValue();
+    const name = stripeAddressElement?.value.name
+    const address = stripeAddressElement?.value.address;
+    if (address) {
+      return {
+        name: name,
+        line1: address.line1,
+        line2: address.line2 || undefined,
+        city: address.city,
+        state: address.state,
+        postalCode: address.postal_code,
+        country: address.country
+      }
+    } else {
+      return null;
+    }
   }
 
   getPaymentElement() {

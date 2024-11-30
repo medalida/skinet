@@ -21,4 +21,5 @@ export class OrderService {
   getOrderDetailed(orderId: number) {
     return this.http.get<Order>(this.baseUrl + 'orders/' + orderId);
   }
+  
 }
