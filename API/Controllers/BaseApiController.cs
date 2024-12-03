@@ -13,7 +13,7 @@ public class BaseApiController : ControllerBase
         int pageSize) where T : BaseEntity
     {
         var items = await repo.ListAsync(spec);
-        var count = await repo.CountAsync();
+        var count = await repo.CountAsync(spec);
         var result = new Pagination<T>(pageIndex, pageSize, count, items);
         return Ok(result);
     }

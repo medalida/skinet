@@ -4,6 +4,7 @@ import { CartItemComponent } from './cart-item/cart-item.component';
 import { OrderSummaryComponent } from '../../shared/components/order-summary/order-summary.component';
 import { EmptyCartGuard } from '../../core/guards/empty-cart.guard';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-cart',
@@ -14,6 +15,11 @@ import { EmptyStateComponent } from '../../shared/components/empty-state/empty-s
 })
 export class CartComponent {
   cartService = inject(CartService);
+  router = inject(Router);
+
+  redirectToShop() {
+    this.router.navigateByUrl('/shop');
+  }
 }
 
 
