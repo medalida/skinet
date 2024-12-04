@@ -1,4 +1,6 @@
-﻿namespace Core.Entities;
+﻿using Core.Interfaces;
+
+namespace Core.Entities;
 
 public class Product : BaseEntity
 {

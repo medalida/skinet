@@ -1,6 +1,8 @@
-﻿namespace Core.Entities.OrderAggregate;
+﻿using Core.Interfaces;
 
-public class Order : BaseEntity
+namespace Core.Entities.OrderAggregate;
+
+public class Order : BaseEntity, IDtoConvertible
 {
     public DateTime OrderDate { get; set; }
     public OrderStatus Status { get; set; }
