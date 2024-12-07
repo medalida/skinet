@@ -3,7 +3,7 @@ import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Cart, CartItem } from '../../shared/modules/cart';
 import { Product } from '../../shared/modules/product';
-import { map } from 'rxjs';
+import { map, tap } from 'rxjs';
 import { DeliveryMethod } from '../../shared/modules/deliveryMethod';
 
 @Injectable({
@@ -40,22 +40,17 @@ export class CartService {
     );
   }
 
-  setCart(cart: Cart): void {
-    this.http.post<Cart>(this.baseUrl + 'cart', cart).subscribe({
-      next: (response) => {
-        this.cart.set(response);
-      },
-      error: (error) => console.error(error)
-    });
+  setCart(cart: Cart) {
+    return this.http.post<Cart>(this.baseUrl + 'cart', cart).pipe(tap(cart => this.cart.set(cart)));
   }
 
-  addItemToCart(item: CartItem | Product, quantity = 1): void {
+  async addItemToCart(item: CartItem | Product, quantity = 1) {
     const cart = this.cart() ?? this.createCart();
     if (this.isProduct(item)) {
       item = this.mapProductToCartItem(item);
     }
     cart.items = this.addOrUpdate(cart.items, item, quantity);
-    this.setCart(cart);
+    await this.setCart(cart).subscribe();
   }
 
   addOrUpdate(items: CartItem[], item: CartItem, quantity: number): CartItem[] {
@@ -92,7 +87,7 @@ export class CartService {
     return cart;
   }
 
-  removeItemFromCart(productId: number, quantity: number = 1): void {
+  async removeItemFromCart(productId: number, quantity: number = 1) {
     const cart = this.cart();
     if (!cart) {
       return;
@@ -109,7 +104,7 @@ export class CartService {
     if (cart.items.length === 0) {
       this.deleteCart();
     } else {
-      this.setCart(cart);
+      await this.setCart(cart).subscribe();
     }
   }
 

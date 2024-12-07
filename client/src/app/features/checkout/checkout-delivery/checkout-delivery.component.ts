@@ -29,12 +29,12 @@ export class CheckoutDeliveryComponent implements OnInit {
     });
   }
 
-  updateDeliveryMethod(method: DeliveryMethod): void {
+  async updateDeliveryMethod(method: DeliveryMethod) {
     this.cartService.selectedDelivery.set(method);
     let cart = this.cartService.cart();
     if (cart) {
       cart.deliveryMethodId = method.id;
-      this.cartService.setCart(cart);
+      await this.cartService.setCart(cart).subscribe();;
       this.deliveryComplete.emit(true);
     }
   }

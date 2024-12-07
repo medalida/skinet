@@ -17,7 +17,7 @@ export class OrderComponent implements OnInit {
   orders: Order[] = [];
 
   ngOnInit(): void {
-    this.orderService.getOrderForUser().subscribe({ 
+    this.orderService.getOrdersForUser().subscribe({ 
       next: (orders) => this.orders = orders,
       error: (error) => console.error(error)
     });

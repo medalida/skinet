@@ -14,7 +14,7 @@ export class OrderService {
     return this.http.post<Order>(this.baseUrl + 'orders', orderToCreate);
   }
 
-  getOrderForUser() {
+  getOrdersForUser() {
     return this.http.get<Order[]>(this.baseUrl + 'orders');
   }
 

@@ -7,6 +7,8 @@ import { AddressPipe } from '../../../shared/pipes/address.pipe';
 import { CurrencyEurPipe } from '../../../shared/pipes/currency-eur.pipe';
 import { DatePipe } from '@angular/common';
 import { PaymentPipe } from '../../../shared/pipes/payment.pipe';
+import { AccountService } from '../../../core/services/account.service';
+import { AdminService } from '../../../core/services/admin.service';
 
 @Component({
   selector: 'app-order-details',
@@ -16,20 +18,29 @@ import { PaymentPipe } from '../../../shared/pipes/payment.pipe';
   styleUrl: './order-details.component.scss'
 })
 export class OrderDetailsComponent {
-buttonText: string = "Return to Orders";
-onReturnClick() {
-  console.log('Return to orders');
-}
+  private accountService = inject(AccountService);
+  private adminService = inject(AdminService);
   orderService = inject(OrderService);
   private activatedRoute = inject(ActivatedRoute);
   order?: Order;
+  buttonText: string = "Return to Orders";
 
   ngOnInit(): void {
     const id = this.activatedRoute.snapshot.paramMap.get('id');
     if (!id) return;
-    this.orderService.getOrderDetailed(+id).subscribe({ 
-      next: (order) => this.order = order,
-      error: (error) => console.error(error)
-    });
+    let callbacks = { 
+      next: (order: Order) => this.order = order,
+      error: (error: any) => console.error(error)
+    }
+    if (this.accountService.isAdmin()) {
+      this.adminService.getOrder(+id).subscribe(callbacks);
+    } else {
+      this.orderService.getOrderDetailed(+id).subscribe(callbacks);
+    }
   }
+
+  onReturnClick() {
+    console.log('Return to orders');
+  }
+  
 }

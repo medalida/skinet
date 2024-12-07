@@ -33,6 +33,10 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         snackbar.error(error.error.title || error.error);
       }
 
+      if (error.status === 403) {
+        snackbar.error('Forbidden');
+      }
+
       if (error.status === 500) {
         const navigationExtras: NavigationExtras = { state: { error: error.error } };
         router.navigateByUrl('/server-error', navigationExtras);

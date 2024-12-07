@@ -117,8 +117,8 @@ export class StripeService {
     const cart = this.cartService.cart();
     if (!cart) throw new Error("Problem with cart")
     return this.http.post<Cart>(this.baseUrl + 'payments/' + cart.id, {}).pipe(
-      map(cart => {
-        this.cartService.setCart(cart);
+      map(async cart => {
+        await this.cartService.setCart(cart).subscribe();
         return cart;
       })
     );
